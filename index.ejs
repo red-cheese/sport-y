@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>sport-y: Активный отдых в Москве</title>
+
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC4CzgaJvEmq5f0GPto36-_9mmj_yamsUE&sensor=true&language=ru"></script>
+    <script type="text/javascript">
+        function initialize() {
+	    var mapOptions = {
+	        center: new google.maps.LatLng(55.75, 37.6167),
+		zoom: 8
+		};
+	    var map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+	}
+    </script>
+
+    <style>
+        #map-canvas {
+	  height: 400px;
+          margin-top: 20px;
+	  margin-bottom: 20px;
+          padding: 0px;
+	}
+
+	html {
+	  position: relative;
+	  min-height: 100%;
+	}
+
+	body {
+	  margin-bottom: 60px;
+	}
+
+	#footer {
+	  position: absolute;
+	  bottom: 0;
+	  width: 100%;
+	  height: 60px;
+	  background-color: #f5f5f5;
+	}
+
+	.container .text-muted {
+	  margin: 20px 0;
+	  text-align: center;
+	}
+    </style>
+
+  </head>
+  <body onload="initialize()">
+    <div class="container">
+
+      <div class="row">
+	<div class="col-xs-6">
+	  <div class="row" style="padding-bottom: 2%">
+	    <h1>sport-y</h1>
+	    <p class="lead">
+	      Проведи досуг в Москве спортивно!
+	    </p>
+	  </div>
+	  <div class="row" id="start">
+	    <p>
+	      Укажите на карте точку.<br>Мы найдём места активного отдыха не дальше 3 км от неё!
+	    </p>
+	  </div>
+
+	  <div class="row" id="found">
+	    <h3>Мы нашли:</h3>
+	    <div class="list-group" style="margin-top: 5%; width: 75%">
+	      <a href="#" class="list-group-item active">Место 1<br>Информация о месте 1</a>
+	      <a href="#" class="list-group-item">Место 2<br>Информация о месте 2</a>
+	      <a href="#" class="list-group-item">Место 3<br>Информация о месте 3</a>
+	    </div>
+	  </div>
+	</div>
+
+	<div class="col-xs-6">
+	  <div class="row">
+	    <div id="map-canvas"></div>
+	  </div>
+	  <div class="row">
+	    <h4>Показывать места из категорий:</h4>
+	    <form role="form">
+	      <div class="row">
+		<div class="col-xs-6">
+		  <div class="checkbox">
+		    <label><input type="checkbox" value="">Катки</label>
+		  </div>
+		  <div class="checkbox">
+		    <label><input type="checkbox" value="">Снежные горки</label>
+		  </div>
+		  <div class="checkbox">
+		    <label><input type="checkbox" value="">Ледяные горки</label>
+		  </div>
+		</div>
+		<div class="col-xs-6">
+		  <div class="checkbox">
+		    <label><input type="checkbox" value="">Скалодромы</label>
+		  </div>
+		  <div class="checkbox">
+		    <label><input type="checkbox" value="">Площадки для волейбола</label>
+		  </div>
+		  <div class="checkbox">
+		    <label><input type="checkbox" value="">Велосипедные дорожки</label>
+		  </div>
+		</div>
+	      </div>
+	      <button type="submit" class="btn btn-default">Найти</button>
+	    </form>
+	  </div>
+	</div>
+      </div>
+
+    </div>
+
+    <div id="footer">
+      <div class="container">
+        <p class="text-muted">Sport-y &#0169; 2014. Powered by <a href="http://www.google.com">Google</a>.</p>
+      </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+  </body>
+</html>
