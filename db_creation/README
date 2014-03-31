@@ -1,0 +1,38 @@
+sport-y
+Project for SPbSU Software Engineering course
+_____________________________________________
+
+Database creation
+_____________________________________________
+
+Elizaveta Shashkova
+SPbSU, 2014
+
+Script db_create.py creates MongoDB database 'sporty-db' from .csv files in directory 'data'. This database has 1 collection of documents named 'checkpoints'.
+In order to create database:
+
+$ python db_create.py
+
+
+Russian:
+ 
+Есть две основные функции: 
+show_data()     - показывает данные из каждого файла, названия колонок, общую статистику данных.
+add_to_db(path) - добавляет данные из папки path в базу с названием 'sporty-db'
+
+Исходные данные имеют 4 типа колонок(перечислены в начале файла db_create.py). Большинство данных имеют все 9 колонок (+1 - категория).
+Если в группе данных не было какой-то колонки, но самих данных много и они интересные(например, велопарковки), значение ставилось равным 'null'.
+
+База данных называется 'sporty-db', содержит 1 коллекцию документов 'checkpoints'.
+Названия колонок в коллекции 'checkpoints' базе данных 'sporty-db':
+'short_name', 'full_name', 'address', 'hours', 'phone', 'email', 'web', 'lat', 'lon', 'category' 
+
+
+Короткая напоминалка про MongoDB:
+Запуск базы:
+mongod --dbpath db
+
+Проверка базы:
+mongo 127.0.0.1:27017
+use sporty-db
+db.checkpoints.find()
