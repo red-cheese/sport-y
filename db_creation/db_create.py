@@ -26,7 +26,7 @@ columns_name = ['NAME', 'LABEL', 'ADDRESS', 'pass', 'pass', 'pass', 'pass',  'LA
 columns_bike = ['NAME', 'pass', 'WHERE_LOC', 'pass', 'pass', 'pass', 'pass', 'LAT', 'LON']
 
 # The most important columns!
-# Names of columns in database
+# Names of columns in database + 'category'
 columns_res = ['short_name', 'full_name', 'address', 'hours', 'phone', 'email',
                'web', 'lat', 'lon']
 
@@ -94,6 +94,8 @@ def convert_dict(dict_bad, arr_name):
             #print dict_bad
             break
         if arr_name[j] == 'pass':
+            dict[columns_res[j]] = 'null'
+        elif dict_bad[arr_name[j]] is 'NaN':
             dict[columns_res[j]] = 'null'
         else:
             dict[columns_res[j]] = dict_bad[arr_name[j]]
