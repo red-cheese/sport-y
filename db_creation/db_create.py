@@ -95,7 +95,7 @@ def convert_dict(dict_bad, arr_name):
             break
         if arr_name[j] == 'pass':
             dict[columns_res[j]] = 'null'
-        elif dict_bad[arr_name[j]] is 'NaN':
+        elif dict_bad[arr_name[j]] == 'NaN':
             dict[columns_res[j]] = 'null'
         else:
             dict[columns_res[j]] = dict_bad[arr_name[j]]
