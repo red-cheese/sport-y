@@ -1,7 +1,10 @@
 var express = require('express');
-
+var mongodb = require('mongodb');
 
 // Configuration
+
+var MongoClient = require('mongodb').MongoClient, Server = require('mongodb').Server;
+var mongoClient = new MongoClient(new Server('localhost', 27017));
 
 var app = express();
 app.use(express.favicon(__dirname + '/favicon.ico'));
@@ -34,9 +37,23 @@ app.post('/', function(req, res) {
 	var lng = req.body.longitude;
 	var toDisplay = [];
 	// Query to DB
-
-
-	res.render('index.ejs', { locals: { lat: lat, lng: lng, toDisplay: toDisplay } });
+        mongoClient.open(function(err, mongoClient) {
+	    var db = mongoClient.db("sporty-db");
+	    var coll = db.collection("checkpoints");
+	    if (chosen.length == 0) {
+		coll.find().toArray(function(err, items) {
+		    toDisplay = items;
+		    mongoClient.close();
+		    res.render('index.ejs', { locals: { lat: lat, lng: lng, toDisplay: toDisplay } });
+		});
+	    } else {
+		coll.find({ category: { $in: chosen } }).toArray(function(err, items) {
+		    toDisplay = items;
+		    mongoClient.close();
+		    res.render('index.ejs', { locals: { lat: lat, lng: lng, toDisplay: toDisplay } }); // Awful code, again :(
+		});
+	    }
+	});
     });
 
 
