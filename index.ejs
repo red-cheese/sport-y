@@ -9,16 +9,45 @@
 
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdz8bZDHO5dagkCgLBU4ygiFQH1kpQxy0&sensor=true&language=ru"></script>
     <script type="text/javascript">
-        function initialize() {
+        function initialize(lat, lng) {
+	    lat = lat || 55.75;
+	    lng = lng || 37.6167;
 	    var mapOptions = {
-	        center: new google.maps.LatLng(55.75, 37.6167),
+	        center: new google.maps.LatLng(lat, lng),
 		zoom: 8
-		};
+	    };
 	    var map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+
+	    google.maps.event.addListener(map, "click", function(event) {
+	        var oldLocation = google.maps.Map.prototype.locationMarker;
+                if (oldLocation) { oldLocation.setMap(null); }
+	        var newLocation = new google.maps.Marker({
+	            position: event.latLng, 
+	            map: map,
+	            title: "Вы здесь"
+	        });
+	        google.maps.Map.prototype.locationMarker = newLocation;
+	        var latitude = document.getElementById("latitude");
+	        var longitude = document.getElementById("longitude");
+	        latitude.setAttribute("value", event.latLng.lat());
+	        longitude.setAttribute("value", event.latLng.lng());
+	    });
+
+	    $('.dropdown-menu').on('click', function(e) {
+	        if($(this).hasClass('dropdown-menu-form')) {
+                e.stopPropagation();
+	        }
+	    });
 	}
     </script>
 
     <style>
+        ul.dropdown-menu-form {
+	  padding-left: 2%;
+	  max-height: 150px;
+	  overflow-y: scroll;
+	}
+
         #map-canvas {
 	  height: 400px;
           margin-top: 20px;
@@ -50,7 +79,7 @@
     </style>
 
   </head>
-  <body onload="initialize()">
+  <body onload="initialize(<%= lat %>, <%= lng %>)">
     <div class="container">
 
       <div class="row">
@@ -78,39 +107,29 @@
 	</div>
 
 	<div class="col-md-6">
-	  <div class="row">
-	    <div id="map-canvas"></div>
-	  </div>
-	  <div class="row">
-	    <h4>Показывать места из категорий:</h4>
-	    <form role="form">
-	      <div class="row">
-		<div class="col-md-6">
-		  <div class="checkbox">
-		    <label><input type="checkbox" value="">Катки</label>
-		  </div>
-		  <div class="checkbox">
-		    <label><input type="checkbox" value="">Снежные горки</label>
-		  </div>
-		  <div class="checkbox">
-		    <label><input type="checkbox" value="">Ледяные горки</label>
-		  </div>
-		</div>
-		<div class="col-md-6">
-		  <div class="checkbox">
-		    <label><input type="checkbox" value="">Скалодромы</label>
-		  </div>
-		  <div class="checkbox">
-		    <label><input type="checkbox" value="">Площадки для волейбола</label>
-		  </div>
-		  <div class="checkbox">
-		    <label><input type="checkbox" value="">Велосипедные дорожки</label>
-		  </div>
-		</div>
+	  <div id="map-canvas"></div>
+	  <form enctype="application/x-www-form-urlencoded" action="/" method="post">
+	    <div class="form-group">
+	      <div class="dropdown">
+		<a class="dropdown-toggle btn" data-toggle="dropdown" href="#">Показывать места из категорий <b class="caret"></b></a>
+		<ul class="dropdown-menu dropdown-menu-form" role="menu">
+		  <% var categories = [ 'Ледовые поля (крытые)', 'Лыжные базы', 'Площадки для кёрлинга', 'Площадки для сноуборда', 'Площадки спортивные универсальные в парках', 'Ледяные горки в парках', 'Места для зимней рыбалки в парках', 'Оборудованные места для зимнего купания в парках', 'Снежные горки в парках', 'Снежные городки', 'Трассы для снегоходов, квадроциклов, ездовых упряжек и прочего', 'Универсальные зоны отдыха в парках', 'Автодромы спортивные', 'Зоны отдыха у воды', 'Летние эстрады, сцены', 'Лодочные станции', 'Места для летнего купания', 'Парки (включая парки не подведомственные)', 'Площадки детские игровые', 'Площадки для настольных игр', 'Площадки для пикника', 'Роллердромы, скейтпарки', 'Автодромы детские учебные', 'Бассейны плавательные крытые', 'Бассейны плавательные открытые', 'Велопарковки', 'Горнолыжные склоны Москвы', 'Городки веревочные', 'Городки тренажерные (воркауты)', 'Городки тренажерные универсальные', 'Гребные базы и каналы', 'Дорожки беговые-прогулочные', 'Лыжные трассы города Москвы', 'Открытые ледовые катки города Москвы', 'Площадки для городошного спорта', 'Площадки для пляжных видов спорта', 'Площадки пейнтбольные', 'Площадки спортивные универсальные', 'Поля для гольфа', 'Поля для мини-гольфа', 'Поля конно-спортивные для конкура и выездки', 'Поля регбийные', 'Поля футбольные', 'Прокаты спортивного инвентаря (отдельностоящие)', 'Скалодромы', 'Станции проката велосипедов', 'Стрелковые тиры', 'Стрельбища', 'Теннисные корты' ];
+		     categories.sort();
+		     for (var i = 0; i < categories.length; i++) { %>
+		  <li>
+		    <label class="checkbox">
+                      <input type="checkbox" name="<%= categories[i] %>" value="">
+                      <%= categories[i] %>
+		    </label>
+		  </li>
+		  <% } %>
+		</ul>
 	      </div>
-	      <button type="submit" class="btn btn-default">Найти</button>
-	    </form>
-	  </div>
+	    </div>
+	    <input type="hidden" id="latitude" name="latitude" value="">
+	    <input type="hidden" id="longitude" name="longitude" value="">
+	    <button type="submit" class="btn btn-default">Найти</button>
+	  </form>
 	</div>
       </div>
 
@@ -118,7 +137,7 @@
 
     <div id="footer">
       <div class="container">
-        <p class="text-muted">Sport-y &#0169; 2014. Powered by <a href="http://www.google.com">Google</a>. Favicon by <a href="http://icons8.com/">Visual Pharm</a>.</p>
+        <p class="text-muted">Sport-y &#0169; 2014. Favicon by <a href="http://icons8.com/">Visual Pharm</a>.</p>
       </div>
     </div>
 
