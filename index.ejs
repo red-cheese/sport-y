@@ -47,12 +47,27 @@
 		    var m_lat = toDisplay[i]["lat"];
 		    var m_lon = toDisplay[i]["lon"];
 
+		    var info = "";
+		    var hrs = toDisplay[i]["hours"];
+		    if (hrs && hrs != "null" && hrs != "нет данных") { info = info + "Часы работы: " + hrs + '<br>'; }
+		    var phone = toDisplay[i]["phone"];
+		    if (phone && phone != "null" && phone != "нет данных") { info = info + "Телефон: " + phone + '<br>'; }
+		    var email = toDisplay[i]["email"];
+		    if (email && email != "null" && email != "нет данных") { info = info + "e-mail: " + email + '<br>'; }
+		    var web = toDisplay[i]["web"];
+		    if (web && web != "null" && web != "нет данных") {
+			var www = "";
+			if (web.substring(0, 7) == "http://") {
+			    www = web.substring(7);
+			} else { www = web; }
+			info += '<a href="http://' + www + '">' + www + '</a>';
+		    }
 		    var contentString = '<div id="content">'+
 				    '<div id="siteNotice">'+
 				    '</div>'+
-				    '<h4 id="firstHeading" class="firstHeading">' + toDisplay[i]["full_name"] + '</h4>' +
+				    '<h4 id="firstHeading" class="firstHeading">' + toDisplay[i]["short_name"] + '</h4>' +
 				    '<div id="bodyContent">' +
-				    '<p>' + toDisplay[i]["address"] + '</p>'+
+				    '<p>' + toDisplay[i]["address"] + '<br>' + info + '</p>'+
 				    '</div>'+
 				    '</div>';
 		    var infowindow = new google.maps.InfoWindow({ content: contentString });
@@ -152,7 +167,7 @@
 	    <div class="list-group" style="margin-top: 5%; width: 75%">
 	      <% var toDisplayParsed = JSON.parse(toDisplay); %>
 	      <% for (var i = 0; i < toDisplayParsed.length; i++) { %>
-		 <a href="#" id="<%= i %>" class="list-group-item"><%= toDisplayParsed[i]["short_name"] %></a>
+		 <a href="#" id="<%= i %>" class="list-group-item"><%= toDisplayParsed[i]["short_name"] %> (<%= toDisplayParsed[i]["dst"].toFixed(3) %> км)</a>
 	      <% } %>
 	    </div>
 	  </div>
