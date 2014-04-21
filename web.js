@@ -1,6 +1,9 @@
 var express = require('express');
 var mongodb = require('mongodb');
 
+var MSK_LAT = 55.75;
+var MSK_LNG = 37.6167;
+
 // Configuration
 
 var MongoClient = require('mongodb').MongoClient, Server = require('mongodb').Server;
@@ -22,7 +25,7 @@ app.use(express.static(__dirname + '/public'));
 // Routes
 
 app.get('/', function(req, res) {
-	res.render('index.ejs', { locals: { lat: undefined, lng: undefined } });
+	res.render('index.ejs', { locals: { lat: MSK_LAT, lng: MSK_LNG, toDisplay: undefined } });
     });
 
 app.post('/', function(req, res) {
@@ -33,8 +36,8 @@ app.post('/', function(req, res) {
 		chosen.push(categories[i]); // Very bad code, but it works fine while I've got no time for fixing
 	    }
 	}
-	var lat = req.body.latitude;
-	var lng = req.body.longitude;
+	var lat = req.body.latitude || MSK_LAT;
+	var lng = req.body.longitude || MSK_LNG;
 	var toDisplay = [];
 	// Query to DB
         mongoClient.open(function(err, mongoClient) {
@@ -44,13 +47,13 @@ app.post('/', function(req, res) {
 		coll.find().toArray(function(err, items) {
 		    toDisplay = items;
 		    mongoClient.close();
-		    res.render('index.ejs', { locals: { lat: lat, lng: lng, toDisplay: toDisplay } });
+		    res.render('index.ejs', { locals: { lat: lat, lng: lng, toDisplay: JSON.stringify(toDisplay) } });
 		});
 	    } else {
 		coll.find({ category: { $in: chosen } }).toArray(function(err, items) {
 		    toDisplay = items;
 		    mongoClient.close();
-		    res.render('index.ejs', { locals: { lat: lat, lng: lng, toDisplay: toDisplay } }); // Awful code, again :(
+		    res.render('index.ejs', { locals: { lat: lat, lng: lng, toDisplay: JSON.stringify(toDisplay) } }); // Awful code, again :(
 		});
 	    }
 	});

@@ -9,18 +9,31 @@
 
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdz8bZDHO5dagkCgLBU4ygiFQH1kpQxy0&sensor=true&language=ru"></script>
     <script type="text/javascript">
-        function initialize(lat, lng) {
-	    lat = lat || 55.75;
-	    lng = lng || 37.6167;
+        function initialize(lat, lng, toDisplay) {
+	    var pos = new google.maps.LatLng(lat, lng);
 	    var mapOptions = {
-	        center: new google.maps.LatLng(lat, lng),
+	        center: pos,
 		zoom: 8
 	    };
 	    var map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+	    var loc = new google.maps.Marker({
+	        position: pos, 
+	        map: map,
+	        title: "Вы здесь"
+	    });
+	    google.maps.Map.prototype.locationMarker = loc;
+
+
+	    if (toDisplay) {
+	        for (var i = 0; i < toDisplay.length; i++) {
+		    var m_lat = toDisplay[i]["lat"];
+		    var m_lon = toDisplay[i]["lon"];
+		    var mrk = new google.maps.Marker({ position: new google.maps.LatLng(m_lat, m_lon), map: map, title: toDisplay[i]["short_name"] });
+		}
+	    }
 
 	    google.maps.event.addListener(map, "click", function(event) {
-	        var oldLocation = google.maps.Map.prototype.locationMarker;
-                if (oldLocation) { oldLocation.setMap(null); }
+		google.maps.Map.prototype.locationMarker.setMap(null);
 	        var newLocation = new google.maps.Marker({
 	            position: event.latLng, 
 	            map: map,
@@ -35,7 +48,7 @@
 
 	    $('.dropdown-menu').on('click', function(e) {
 	        if($(this).hasClass('dropdown-menu-form')) {
-                e.stopPropagation();
+		    e.stopPropagation();
 	        }
 	    });
 	}
@@ -79,7 +92,7 @@
     </style>
 
   </head>
-  <body onload="initialize(<%= lat %>, <%= lng %>)">
+  <body onload="initialize(<%= lat %>, <%= lng %>, <%= toDisplay %>)">
     <div class="container">
 
       <div class="row">
@@ -96,19 +109,22 @@
 	    </p>
 	  </div>
 
+	  <% if (toDisplay) { %>
 	  <div class="row" id="found">
 	    <h3>Мы нашли:</h3>
 	    <div class="list-group" style="margin-top: 5%; width: 75%">
-	      <a href="#" class="list-group-item active">Место 1<br>Информация о месте 1</a>
-	      <a href="#" class="list-group-item">Место 2<br>Информация о месте 2</a>
-	      <a href="#" class="list-group-item">Место 3<br>Информация о месте 3</a>
+	      <% var toDisplayParsed = JSON.parse(toDisplay); %>
+	      <% for (var i = 0; i < toDisplayParsed.length; i++) { %>
+		 <a href="#" class="list-group-item"><%= toDisplayParsed[i]["short_name"] %></a>
+	      <% } %>
 	    </div>
 	  </div>
+	  <% } %>
 	</div>
 
 	<div class="col-md-6">
 	  <div id="map-canvas"></div>
-	  <form enctype="application/x-www-form-urlencoded" action="/" method="post">
+	  <form class="form-inline" enctype="application/x-www-form-urlencoded" action="/" method="post">
 	    <div class="form-group">
 	      <div class="dropdown">
 		<a class="dropdown-toggle btn" data-toggle="dropdown" href="#">Показывать места из категорий <b class="caret"></b></a>
