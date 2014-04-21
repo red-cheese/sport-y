@@ -28,7 +28,24 @@
 	        for (var i = 0; i < toDisplay.length; i++) {
 		    var m_lat = toDisplay[i]["lat"];
 		    var m_lon = toDisplay[i]["lon"];
-		    var mrk = new google.maps.Marker({ position: new google.maps.LatLng(m_lat, m_lon), map: map, title: toDisplay[i]["short_name"] });
+
+		    var contentString = '<div id="content">'+
+				    '<div id="siteNotice">'+
+				    '</div>'+
+				    '<h4 id="firstHeading" class="firstHeading">' + toDisplay[i]["full_name"] + '</h4>' +
+				    '<div id="bodyContent">' +
+				    '<p>' + toDisplay[i]["address"] + '</p>'+
+				    '</div>'+
+				    '</div>';
+		    var infowindow = new google.maps.InfoWindow({ content: contentString });
+		    var marker = new google.maps.Marker({
+				    position: new google.maps.LatLng(m_lat, m_lon),
+				    map: map,
+				    title: toDisplay[i]["short_name"],
+				    infowindow: infowindow });
+		    google.maps.event.addListener(marker, 'click', function() {
+		        this.infowindow.open(map, this);
+		    });
 		}
 	    }
 
