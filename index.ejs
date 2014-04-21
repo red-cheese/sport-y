@@ -16,13 +16,31 @@
 		zoom: 8
 	    };
 	    var map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+	    google.maps.Map.prototype.myLocationInfowindow = new google.maps.InfoWindow({ content: "ВЫ ЗДЕСЬ" });
 	    var loc = new google.maps.Marker({
 	        position: pos, 
 	        map: map,
-	        title: "Вы здесь"
+	        title: "Вы здесь",
+	        infowindow: google.maps.Map.prototype.myLocationInfowindow
 	    });
-	    google.maps.Map.prototype.locationMarker = loc;
+	    google.maps.Map.prototype.myLocation = loc;
+	    loc.infowindow.open(map, loc);
 
+	    var markers = [];
+	    var activeMarkerId = "";
+	    google.maps.event.addListener(google.maps.Map.prototype.myLocation, "click", function() { this.infowindow.open(map, this); });
+
+	    function setActiveMarker(newCustomId) {
+		var oldMarker = markers[activeMarkerId];
+		if (oldMarker) {
+		    oldMarker.infowindow.close(oldMarker.map, oldMarker);
+		    $("#" + activeMarkerId).removeClass("active");
+		}
+		activeMarkerId = newCustomId;
+		var newMarker = markers[newCustomId];
+		newMarker.infowindow.open(newMarker.map, newMarker);
+		$("#" + newCustomId).addClass("active");
+	    }
 
 	    if (toDisplay) {
 	        for (var i = 0; i < toDisplay.length; i++) {
@@ -38,25 +56,22 @@
 				    '</div>'+
 				    '</div>';
 		    var infowindow = new google.maps.InfoWindow({ content: contentString });
+		    var customId = String(i);
 		    var marker = new google.maps.Marker({
 				    position: new google.maps.LatLng(m_lat, m_lon),
 				    map: map,
 				    title: toDisplay[i]["short_name"],
-				    infowindow: infowindow });
+				    infowindow: infowindow,
+				    customId: customId });
+		    markers[customId] = marker;
 		    google.maps.event.addListener(marker, 'click', function() {
-		        this.infowindow.open(map, this);
+		        setActiveMarker(this.customId);
 		    });
 		}
 	    }
 
 	    google.maps.event.addListener(map, "click", function(event) {
-		google.maps.Map.prototype.locationMarker.setMap(null);
-	        var newLocation = new google.maps.Marker({
-	            position: event.latLng, 
-	            map: map,
-	            title: "Вы здесь"
-	        });
-	        google.maps.Map.prototype.locationMarker = newLocation;
+		google.maps.Map.prototype.myLocation.setPosition(event.latLng);
 	        var latitude = document.getElementById("latitude");
 	        var longitude = document.getElementById("longitude");
 	        latitude.setAttribute("value", event.latLng.lat());
@@ -67,6 +82,11 @@
 	        if($(this).hasClass('dropdown-menu-form')) {
 		    e.stopPropagation();
 	        }
+	    });
+
+	    $('.list-group-item').on('click', function(e) {
+	        customId = $(this).attr("id");
+		setActiveMarker(customId);
 	    });
 	}
     </script>
@@ -132,7 +152,7 @@
 	    <div class="list-group" style="margin-top: 5%; width: 75%">
 	      <% var toDisplayParsed = JSON.parse(toDisplay); %>
 	      <% for (var i = 0; i < toDisplayParsed.length; i++) { %>
-		 <a href="#" class="list-group-item"><%= toDisplayParsed[i]["short_name"] %></a>
+		 <a href="#" id="<%= i %>" class="list-group-item"><%= toDisplayParsed[i]["short_name"] %></a>
 	      <% } %>
 	    </div>
 	  </div>
