@@ -3,24 +3,30 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <% if (lang == 0) { %>
     <title>sport-y: Активный отдых в Москве</title>
+    <% } else { %>
+    <title>sport-y: Sports and leisure in Moscow</title>
+    <% } %>
 
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
 
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdz8bZDHO5dagkCgLBU4ygiFQH1kpQxy0&sensor=true&language=ru"></script>
+    <% var mapOptions = lang == 0 ? "https://maps.googleapis.com/maps/api/js?key=AIzaSyAdz8bZDHO5dagkCgLBU4ygiFQH1kpQxy0&sensor=true&language=ru" : "https://maps.googleapis.com/maps/api/js?key=AIzaSyAdz8bZDHO5dagkCgLBU4ygiFQH1kpQxy0&sensor=true&language=en"; %>
+    <script type="text/javascript" src="<%= mapOptions %>"></script>
     <script type="text/javascript">
-        function initialize(lat, lng, toDisplay) {
+        function initialize(lat, lng, toDisplay, lang) {
 	    var pos = new google.maps.LatLng(lat, lng);
 	    var mapOptions = {
 	        center: pos,
 		zoom: 8
 	    };
 	    var map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
-	    google.maps.Map.prototype.myLocationInfowindow = new google.maps.InfoWindow({ content: "ВЫ ЗДЕСЬ" });
+	    var content = lang == 0 ? "ВЫ ЗДЕСЬ" : "YOU ARE HERE";
+	    google.maps.Map.prototype.myLocationInfowindow = new google.maps.InfoWindow({ content: content });
 	    var loc = new google.maps.Marker({
 	        position: pos, 
 	        map: map,
-	        title: "Вы здесь",
+	        title: content,
 	        infowindow: google.maps.Map.prototype.myLocationInfowindow
 	    });
 	    google.maps.Map.prototype.myLocation = loc;
@@ -156,7 +162,7 @@
     </style>
 
   </head>
-  <body onload="initialize(<%= lat %>, <%= lng %>, <%= toDisplay %>)">
+  <body onload="initialize(<%= lat %>, <%= lng %>, <%= toDisplay %>, <%= lang %>)">
     <div class="container">
 
       <div class="row">
@@ -164,18 +170,30 @@
 	  <div class="row" style="padding-bottom: 2%">
 	    <h1>sport-y</h1>
 	    <p class="lead">
+	      <% if (lang == 0) { %>
 	      Проведи досуг в Москве спортивно!
+	      <% } else { %>
+	      Make your leisure in Moscow sporty!
+	      <% } %>
 	    </p>
 	  </div>
 	  <div class="row" id="start">
 	    <p>
+	      <% if (lang == 0) { %>
 	      Укажите на карте точку.<br>Мы найдём места активного отдыха не дальше 3 км от неё!
+	      <% } else { %>
+	      Pick a point on the map.<br>We'll find cool sports places nearby!
+	      <% } %>
 	    </p>
 	  </div>
 
 	  <% if (toDisplay) { %>
 	  <div class="row" id="found">
+	    <% if (lang == 0) { %>
 	    <h3>Мы нашли:</h3>
+	    <% } else { %>
+	    <h3>We've found:</h3>
+	    <% } %>
 	    <div class="list-group" style="margin-top: 5%; width: 75%">
 	      <% var toDisplayParsed = JSON.parse(toDisplay); %>
 	      <% for (var i = 0; i < toDisplayParsed.length; i++) { %>
@@ -190,13 +208,18 @@
 	  <div id="map-canvas"></div>
 	  <div class="row">
 	    <div class="col-md-8">
-	      <form class="form-inline" enctype="application/x-www-form-urlencoded" action="/" method="post">
+	      <% var action = lang == 0 ? "/" : "/en"; %>
+	      <form class="form-inline" enctype="application/x-www-form-urlencoded" action="<%= action %>" method="post">
 		<div class="form-group">
 		  <div class="dropdown">
+		    <% if (lang == 0) { %>
 		    <a class="dropdown-toggle btn" data-toggle="dropdown" href="#">Показывать места из категорий <b class="caret"></b></a>
+		    <% } else { %>
+		    <a class="dropdown-toggle btn" data-toggle="dropdown" href="#">Select categories <b class="caret"></b></a>
+		    <% } %>
 		    <ul class="dropdown-menu dropdown-menu-form" role="menu">
-		      <% var categories = [ 'Ледовые поля (крытые)', 'Лыжные базы', 'Площадки для кёрлинга', 'Площадки для сноуборда', 'Площадки спортивные универсальные в парках', 'Ледяные горки в парках', 'Места для зимней рыбалки в парках', 'Оборудованные места для зимнего купания в парках', 'Снежные горки в парках', 'Снежные городки', 'Трассы для снегоходов, квадроциклов, ездовых упряжек и прочего', 'Универсальные зоны отдыха в парках', 'Автодромы спортивные', 'Зоны отдыха у воды', 'Летние эстрады, сцены', 'Лодочные станции', 'Места для летнего купания', 'Парки (включая парки не подведомственные)', 'Площадки детские игровые', 'Площадки для настольных игр', 'Площадки для пикника', 'Роллердромы, скейтпарки', 'Автодромы детские учебные', 'Бассейны плавательные крытые', 'Бассейны плавательные открытые', 'Велопарковки', 'Горнолыжные склоны Москвы', 'Городки веревочные', 'Городки тренажерные (воркауты)', 'Городки тренажерные универсальные', 'Гребные базы и каналы', 'Дорожки беговые-прогулочные', 'Лыжные трассы города Москвы', 'Открытые ледовые катки города Москвы', 'Площадки для городошного спорта', 'Площадки для пляжных видов спорта', 'Площадки пейнтбольные', 'Площадки спортивные универсальные', 'Поля для гольфа', 'Поля для мини-гольфа', 'Поля конно-спортивные для конкура и выездки', 'Поля регбийные', 'Поля футбольные', 'Прокаты спортивного инвентаря (отдельностоящие)', 'Скалодромы', 'Станции проката велосипедов', 'Стрелковые тиры', 'Стрельбища', 'Теннисные корты' ];
-		     categories.sort();
+		      <% var categories = lang == 0 ? [ 'Ледовые поля (крытые)', 'Лыжные базы', 'Площадки для кёрлинга', 'Площадки для сноуборда', 'Площадки спортивные универсальные в парках', 'Ледяные горки в парках', 'Места для зимней рыбалки в парках', 'Оборудованные места для зимнего купания в парках', 'Снежные горки в парках', 'Снежные городки', 'Трассы для снегоходов, квадроциклов, ездовых упряжек и прочего', 'Универсальные зоны отдыха в парках', 'Автодромы спортивные', 'Зоны отдыха у воды', 'Летние эстрады, сцены', 'Лодочные станции', 'Места для летнего купания', 'Парки (включая парки не подведомственные)', 'Площадки детские игровые', 'Площадки для настольных игр', 'Площадки для пикника', 'Роллердромы, скейтпарки', 'Автодромы детские учебные', 'Бассейны плавательные крытые', 'Бассейны плавательные открытые', 'Велопарковки', 'Горнолыжные склоны Москвы', 'Городки веревочные', 'Городки тренажерные (воркауты)', 'Городки тренажерные универсальные', 'Гребные базы и каналы', 'Дорожки беговые-прогулочные', 'Лыжные трассы города Москвы', 'Открытые ледовые катки города Москвы', 'Площадки для городошного спорта', 'Площадки для пляжных видов спорта', 'Площадки пейнтбольные', 'Площадки спортивные универсальные', 'Поля для гольфа', 'Поля для мини-гольфа', 'Поля конно-спортивные для конкура и выездки', 'Поля регбийные', 'Поля футбольные', 'Прокаты спортивного инвентаря (отдельностоящие)', 'Скалодромы', 'Станции проката велосипедов', 'Стрелковые тиры', 'Стрельбища', 'Теннисные корты' ] : ['Covered skating rinks', 'Ski resorts', 'Curling', 'Snowboading', 'Playgrounds in parks', 'Slides in parks', 'Winter fishing in parks', 'Winter swimming', 'Snow coasts in parks', 'Snow fortresses in parks', 'Showmobiles', 'Rest areas in parks', 'Motor-racing tracks', 'Rest areas near the water', 'Summer theatres', 'Boat stations', 'Summer swimming', 'Parks', 'Playgrounds for children', 'Playgrounds for board-games', 'Places for basketpicnic', 'Roller rinks', 'Motor-racing tracks for children', 'Covered swimming pools', 'Outdoor swimming pools', 'Bicycle parking', 'Ski slopes in Moscow', 'Ropes courses', 'Work-out playgrounds', 'Work-out places', 'Canoeing', 'Jogging paths', 'Ski paths in Moscow', 'Outdoor skating rinks', 'Gorodki playgrounds', 'Beach sports', 'Paintball', 'Sports playgrounds', 'Golf', 'Mini-golf', 'Horse riding', 'Rugby', 'Football', 'Sports equipment renting', 'Rock-climbing', 'Bicycle renting', 'Shooting saloons', 'Shooting', 'Tennis'];
+			 categories.sort();
 			 for (var i = 0; i < categories.length; i++) { %>
 			 <li>
 			   <label class="checkbox">
@@ -210,11 +233,19 @@
 		</div>
 		<input type="hidden" id="latitude" name="latitude" value="">
 		<input type="hidden" id="longitude" name="longitude" value="">
+		<% if (lang == 0) { %>
 		<button type="submit" class="btn btn-default">Найти</button>
+		<% } else { %>
+		<button type="submit" class="btn btn-default">Go</button>
+		<% } %>
 	      </form>
 	    </div>
 	    <div class="col-md-4">
+	      <% if (lang == 0) { %>
 	      <button type="button" id="resetButton" class="btn btn-default">Очистить</button>
+	      <% } else { %>
+	      <button type="button" id="resetButton" class="btn btn-default">Reset</button>
+	      <% } %>
 	    </div>
 	  </div>
 	</div>
@@ -224,7 +255,7 @@
 
     <div id="footer">
       <div class="container">
-        <p class="text-muted">Sport-y &#0169; 2014. Favicon by <a href="http://icons8.com/">Visual Pharm</a>.</p>
+        <p class="text-muted">Sport-y &#0169; 2014. Favicon by <a href="http://icons8.com/">Visual Pharm</a>. <% if (lang == 0) { %><a href="/en">English version</a><% } else { %><a href="/">Русская версия</a><% } %>.</p>
       </div>
     </div>
 

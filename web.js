@@ -4,6 +4,60 @@ var mongodb = require('mongodb');
 var MSK_LAT = 55.75;
 var MSK_LNG = 37.6167;
 
+var CATEGORIES = [ 'Ледовые поля (крытые)', 'Лыжные базы', 'Площадки для кёрлинга', 'Площадки для сноуборда', 'Площадки спортивные универсальные в парках', 'Ледяные горки в парках', 'Места для зимней рыбалки в парках', 'Оборудованные места для зимнего купания в парках', 'Снежные горки в парках', 'Снежные городки', 'Трассы для снегоходов, квадроциклов, ездовых упряжек и прочего', 'Универсальные зоны отдыха в парках', 'Автодромы спортивные', 'Зоны отдыха у воды', 'Летние эстрады, сцены', 'Лодочные станции', 'Места для летнего купания', 'Парки (включая парки не подведомственные)', 'Площадки детские игровые', 'Площадки для настольных игр', 'Площадки для пикника', 'Роллердромы, скейтпарки', 'Автодромы детские учебные', 'Бассейны плавательные крытые', 'Бассейны плавательные открытые', 'Велопарковки', 'Горнолыжные склоны Москвы', 'Городки веревочные', 'Городки тренажерные (воркауты)', 'Городки тренажерные универсальные', 'Гребные базы и каналы', 'Дорожки беговые-прогулочные', 'Лыжные трассы города Москвы', 'Открытые ледовые катки города Москвы', 'Площадки для городошного спорта', 'Площадки для пляжных видов спорта', 'Площадки пейнтбольные', 'Площадки спортивные универсальные', 'Поля для гольфа', 'Поля для мини-гольфа', 'Поля конно-спортивные для конкура и выездки', 'Поля регбийные', 'Поля футбольные', 'Прокаты спортивного инвентаря (отдельностоящие)', 'Скалодромы', 'Станции проката велосипедов', 'Стрелковые тиры', 'Стрельбища', 'Теннисные корты' ];
+
+var CATEGORIES_EN = {
+    'Covered skating rinks': 'Ледовые поля (крытые)',
+    'Ski resorts': 'Лыжные базы',
+    'Curling': 'Площадки для кёрлинга',
+    'Snowboading': 'Площадки для сноуборда',
+    'Playgrounds in parks': 'Площадки спортивные универсальные в парках',
+    'Slides in parks': 'Ледяные горки в парках',
+    'Winter fishing in parks': 'Места для зимней рыбалки в парках',
+    'Winter swimming': 'Оборудованные места для зимнего купания в парках',
+    'Snow coasts in parks': 'Снежные горки в парках',
+    'Snow fortresses in parks': 'Снежные городки',
+    'Showmobiles': 'Трассы для снегоходов, квадроциклов, ездовых упряжек и прочего',
+    'Rest areas in parks': 'Универсальные зоны отдыха в парках',
+    'Motor-racing tracks': 'Автодромы спортивные',
+    'Rest areas near the water': 'Зоны отдыха у воды',
+    'Summer theatres': 'Летние эстрады, сцены',
+    'Boat stations': 'Лодочные станции',
+    'Summer swimming': 'Места для летнего купания',
+    'Parks': 'Парки (включая парки не подведомственные)',
+    'Playgrounds for children': 'Площадки детские игровые',
+    'Playgrounds for board-games': 'Площадки для настольных игр',
+    'Places for basketpicnic': 'Площадки для пикника',
+    'Roller rinks': 'Роллердромы, скейтпарки',
+    'Motor-racing tracks for children': 'Автодромы детские учебные',
+    'Covered swimming pools': 'Бассейны плавательные крытые',
+    'Outdoor swimming pools': 'Бассейны плавательные открытые',
+    'Bicycle parking': 'Велопарковки',
+    'Ski slopes in Moscow': 'Горнолыжные склоны Москвы',
+    'Ropes courses': 'Городки веревочные',
+    'Work-out playgrounds': 'Городки тренажерные (воркауты)',
+    'Work-out places': 'Городки тренажерные универсальные',
+    'Canoeing': 'Гребные базы и каналы',
+    'Jogging paths': 'Дорожки беговые-прогулочные',
+    'Ski paths in Moscow': 'Лыжные трассы города Москвы',
+    'Outdoor skating rinks': 'Открытые ледовые катки города Москвы',
+    'Gorodki playgrounds': 'Площадки для городошного спорта',
+    'Beach sports': 'Площадки для пляжных видов спорта',
+    'Paintball': 'Площадки пейнтбольные',
+    'Sports playgrounds': 'Площадки спортивные универсальные',
+    'Golf': 'Поля для гольфа',
+    'Mini-golf': 'Поля для мини-гольфа',
+    'Horse riding': 'Поля конно-спортивные для конкура и выездки',
+    'Rugby': 'Поля регбийные',
+    'Football': 'Поля футбольные',
+    'Sports equipment renting': 'Прокаты спортивного инвентаря (отдельностоящие)',
+    'Rock-climbing': 'Скалодромы',
+    'Bicycle renting': 'Станции проката велосипедов',
+    'Shooting saloons': 'Стрелковые тиры',
+    'Shooting': 'Стрельбища',
+    'Tennis': 'Теннисные корты' };
+
+
 // Configuration
 
 var MongoClient = require('mongodb').MongoClient, Server = require('mongodb').Server;
@@ -25,7 +79,11 @@ app.use(express.static(__dirname + '/public'));
 // Routes
 
 app.get('/', function(req, res) {
-	res.render('index.ejs', { locals: { lat: MSK_LAT, lng: MSK_LNG, toDisplay: undefined } });
+	res.render('index.ejs', { locals: { lat: MSK_LAT, lng: MSK_LNG, toDisplay: undefined, lang: 0 } });
+    });
+
+app.get('/en', function(req, res) {
+	res.render('index.ejs', { locals: { lat: MSK_LAT, lng: MSK_LNG, toDisplay: undefined, lang: 1 } });
     });
 
 function deg2rad(deg) {
@@ -67,35 +125,46 @@ function nearest(items, lat, lng) {
     return res;
 }
 
+function findCheckpoints(categories, lat, lng, lang, res) { // Ugly but works in the asynchronous Jaavascript nature
+    mongoClient.open(function(err, mongoClient) {
+	var db = mongoClient.db("sporty-db");
+	var coll = db.collection("checkpoints");
+	if (categories.length == 0) {
+	    coll.find().toArray(function(err, items) {
+		mongoClient.close();
+		res.render('index.ejs', { locals: { lat: lat, lng: lng, toDisplay: JSON.stringify(nearest(items, lat, lng)), lang: lang } });
+	    });
+	} else {
+	    coll.find({ category: { $in: categories } }).toArray(function(err, items) {
+		mongoClient.close();
+		res.render('index.ejs', { locals: { lat: lat, lng: lng, toDisplay: JSON.stringify(nearest(items, lat, lng)), lang: lang } });
+	    });
+	}
+    });
+}
+
 app.post('/', function(req, res) {
-	var categories = [ 'Ледовые поля (крытые)', 'Лыжные базы', 'Площадки для кёрлинга', 'Площадки для сноуборда', 'Площадки спортивные универсальные в парках', 'Ледяные горки в парках', 'Места для зимней рыбалки в парках', 'Оборудованные места для зимнего купания в парках', 'Снежные горки в парках', 'Снежные городки', 'Трассы для снегоходов, квадроциклов, ездовых упряжек и прочего', 'Универсальные зоны отдыха в парках', 'Автодромы спортивные', 'Зоны отдыха у воды', 'Летние эстрады, сцены', 'Лодочные станции', 'Места для летнего купания', 'Парки (включая парки не подведомственные)', 'Площадки детские игровые', 'Площадки для настольных игр', 'Площадки для пикника', 'Роллердромы, скейтпарки', 'Автодромы детские учебные', 'Бассейны плавательные крытые', 'Бассейны плавательные открытые', 'Велопарковки', 'Горнолыжные склоны Москвы', 'Городки веревочные', 'Городки тренажерные (воркауты)', 'Городки тренажерные универсальные', 'Гребные базы и каналы', 'Дорожки беговые-прогулочные', 'Лыжные трассы города Москвы', 'Открытые ледовые катки города Москвы', 'Площадки для городошного спорта', 'Площадки для пляжных видов спорта', 'Площадки пейнтбольные', 'Площадки спортивные универсальные', 'Поля для гольфа', 'Поля для мини-гольфа', 'Поля конно-спортивные для конкура и выездки', 'Поля регбийные', 'Поля футбольные', 'Прокаты спортивного инвентаря (отдельностоящие)', 'Скалодромы', 'Станции проката велосипедов', 'Стрелковые тиры', 'Стрельбища', 'Теннисные корты' ];
 	var chosen = [];
-	for (var i = 0; i < categories.length; i++) {
-	    if (req.body[categories[i]] == '') {
-		chosen.push(categories[i]); // Very bad code, but it works fine while I've got no time for fixing
+	for (var i = 0; i < CATEGORIES.length; i++) {
+	    if (req.body[CATEGORIES[i]] == '') {
+		chosen.push(CATEGORIES[i]); // Very bad code, but it works fine while I've got no time for fixing
 	    }
 	}
 	var lat = req.body.latitude || MSK_LAT;
 	var lng = req.body.longitude || MSK_LNG;
-	var toDisplay = [];
-	// Query to DB
-        mongoClient.open(function(err, mongoClient) {
-	    var db = mongoClient.db("sporty-db");
-	    var coll = db.collection("checkpoints");
-	    if (chosen.length == 0) {
-		coll.find().toArray(function(err, items) {
-		    toDisplay = nearest(items, lat, lng);
-		    mongoClient.close();
-		    res.render('index.ejs', { locals: { lat: lat, lng: lng, toDisplay: JSON.stringify(toDisplay) } });
-		});
-	    } else {
-		coll.find({ category: { $in: chosen } }).toArray(function(err, items) {
-		    toDisplay = nearest(items, lat, lng);
-		    mongoClient.close();
-		    res.render('index.ejs', { locals: { lat: lat, lng: lng, toDisplay: JSON.stringify(toDisplay) } }); // Awful code, again :(
-		});
+	findCheckpoints(chosen, lat, lng, 0, res);
+    });
+
+app.post('/en', function(req, res) {
+	var chosen = [];
+	for (var i = 0; i < CATEGORIES.length; i++) {
+	    if (req.body[CATEGORIES[i]] == '') {
+		chosen.push(CATEGORIES_EN[CATEGORIES[i]]);
 	    }
-	});
+	}
+	var lat = req.body.latitude || MSK_LAT;
+	var lng = req.body.longitude || MSK_LNG;
+	findCheckpoints(chosen, lat, lng, 1, res);
     });
 
 
