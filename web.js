@@ -157,9 +157,9 @@ app.post('/', function(req, res) {
 
 app.post('/en', function(req, res) {
 	var chosen = [];
-	for (var i = 0; i < CATEGORIES.length; i++) {
-	    if (req.body[CATEGORIES[i]] == '') {
-		chosen.push(CATEGORIES_EN[CATEGORIES[i]]);
+	for (var c in CATEGORIES_EN) {
+	    if (CATEGORIES_EN.hasOwnProperty(c) && req.body[c] == '') {
+		chosen.push(CATEGORIES_EN[c]);
 	    }
 	}
 	var lat = req.body.latitude || MSK_LAT;
