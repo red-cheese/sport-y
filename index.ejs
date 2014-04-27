@@ -47,15 +47,16 @@
 		    var m_lat = toDisplay[i]["lat"];
 		    var m_lon = toDisplay[i]["lon"];
 
+		    var badData = ["null", "нет данных", "нет", "нет дынных"];
 		    var info = "";
 		    var hrs = toDisplay[i]["hours"];
-		    if (hrs && hrs != "null" && hrs != "нет данных") { info = info + "Часы работы: " + hrs + '<br>'; }
+		    if (hrs && (badData.indexOf(hrs) < 0)) { info = info + "Часы работы: " + hrs + '<br>'; }
 		    var phone = toDisplay[i]["phone"];
-		    if (phone && phone != "null" && phone != "нет данных") { info = info + "Телефон: " + phone + '<br>'; }
+		    if (phone && (badData.indexOf(phone) < 0)) { info = info + "Телефон: " + phone + '<br>'; }
 		    var email = toDisplay[i]["email"];
-		    if (email && email != "null" && email != "нет данных") { info = info + "e-mail: " + email + '<br>'; }
+		    if (email && (badData.indexOf(email) < 0)) { info = info + "e-mail: " + email + '<br>'; }
 		    var web = toDisplay[i]["web"];
-		    if (web && web != "null" && web != "нет данных") {
+		    if (web && (badData.indexOf(web) < 0)) {
 			var www = "";
 			if (web.substring(0, 7) == "http://") {
 			    www = web.substring(7);
