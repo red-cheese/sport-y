@@ -60,8 +60,9 @@ var CATEGORIES_EN = {
 
 // Configuration
 
-var MongoClient = require('mongodb').MongoClient, Server = require('mongodb').Server;
-var mongoClient = new MongoClient(new Server('localhost', 27017));
+var MONGODB_URI = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || "mongodb://localhost/sporty-db",
+    db,
+    checkpoints;
 
 var app = express();
 app.use(express.favicon(__dirname + '/favicon.ico'));
@@ -126,21 +127,15 @@ function nearest(items, lat, lng) {
 }
 
 function findCheckpoints(categories, lat, lng, lang, res) { // Ugly but works in the asynchronous Jaavascript nature
-    mongoClient.open(function(err, mongoClient) {
-	var db = mongoClient.db("sporty-db");
-	var coll = db.collection("checkpoints");
-	if (categories.length == 0) {
-	    coll.find().toArray(function(err, items) {
-		mongoClient.close();
-		res.render('index.ejs', { locals: { lat: lat, lng: lng, toDisplay: JSON.stringify(nearest(items, lat, lng)), lang: lang } });
-	    });
-	} else {
-	    coll.find({ category: { $in: categories } }).toArray(function(err, items) {
-		mongoClient.close();
-		res.render('index.ejs', { locals: { lat: lat, lng: lng, toDisplay: JSON.stringify(nearest(items, lat, lng)), lang: lang } });
-	    });
-	}
-    });
+    if (categories.length == 0) {
+	checkpoints.find().toArray(function(err, items) {
+	    res.render('index.ejs', { locals: { lat: lat, lng: lng, toDisplay: JSON.stringify(nearest(items, lat, lng)), lang: lang } });
+	});
+    } else {
+	checkpoints.find({ category: { $in: categories } }).toArray(function(err, items) {
+	    res.render('index.ejs', { locals: { lat: lat, lng: lng, toDisplay: JSON.stringify(nearest(items, lat, lng)), lang: lang } });
+	});
+    }
 }
 
 app.post('/', function(req, res) {
@@ -168,7 +163,9 @@ app.post('/en', function(req, res) {
     });
 
 
-var port = process.env.PORT || 8080;
-app.listen(port, function() {
-	console.log("Listening on " + port);
+mongodb.MongoClient.connect(MONGODB_URI, function (err, database) {
+    if (err) throw err;
+    db = database;
+    checkpoints = db.collection("checkpoints");
+    var server = app.listen(process.env.PORT || 8080);
     });
