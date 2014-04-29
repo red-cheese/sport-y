@@ -168,23 +168,28 @@
       <div class="row">
 	<div class="col-md-6">
 	  <div class="row" style="padding-bottom: 2%">
-	    <h1>sport-y</h1>
-	    <p class="lead">
-	      <% if (lang == 0) { %>
-	      Проведи досуг в Москве спортивно!
-	      <% } else { %>
-	      Make your leisure in Moscow sporty!
-	      <% } %>
-	    </p>
+	    <div class="col-md-3">
+	      <img src="images/football.jpg" class="img-responsive" style="padding-top: 15%;" alt="Responsive Image">
+	    </div>
+	    <div class="col-md-9">
+	      <h1 style="color: #6699CC;">sport-y</h1>
+	      <p class="lead">
+		<% if (lang == 0) { %>
+		Проведи досуг в Москве спортивно!
+		<% } else { %>
+		Make your leisure in Moscow sporty!
+		<% } %>
+	      </p>
+	      <p>
+		<% if (lang == 0) { %>
+		Укажите на карте точку.<br>Мы найдём места активного отдыха не дальше 3 км от неё!
+		<% } else { %>
+		Pick a point on the map.<br>We'll find cool sports places nearby!
+		<% } %>
+	      </p>
+	    </div>
 	  </div>
 	  <div class="row" id="start">
-	    <p>
-	      <% if (lang == 0) { %>
-	      Укажите на карте точку.<br>Мы найдём места активного отдыха не дальше 3 км от неё!
-	      <% } else { %>
-	      Pick a point on the map.<br>We'll find cool sports places nearby!
-	      <% } %>
-	    </p>
 	  </div>
 
 	  <% if (toDisplay) { %>
