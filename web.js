@@ -64,7 +64,6 @@ var MongoClient = require('mongodb').MongoClient, Server = require('mongodb').Se
 var mongoClient = new MongoClient(new Server('localhost', 27017));
 
 var app = express();
-app.use(express.favicon(__dirname + '/favicon.ico'));
 app.use(express.bodyParser());
 app.use(express.cookieParser());
 app.use(express.methodOverride());
