@@ -1,4 +1,4 @@
-var express = require('express');
+﻿var express = require('express');
 var mongodb = require('mongodb');
 
 var MSK_LAT = 55.75;
@@ -78,11 +78,11 @@ app.use(express.static(__dirname + '/public'));
 
 // Routes
 
-app.get('/', function(req, res) {
+app.get('/sport-y/', function(req, res) {
 	res.render('index.ejs', { locals: { lat: MSK_LAT, lng: MSK_LNG, toDisplay: undefined, lang: 0 } });
     });
 
-app.get('/en', function(req, res) {
+app.get('/sport-y/en', function(req, res) {
 	res.render('index.ejs', { locals: { lat: MSK_LAT, lng: MSK_LNG, toDisplay: undefined, lang: 1 } });
     });
 
@@ -143,7 +143,7 @@ function findCheckpoints(categories, lat, lng, lang, res) { // Ugly but works in
     });
 }
 
-app.post('/', function(req, res) {
+app.post('/sport-y/', function(req, res) {
 	var chosen = [];
 	for (var i = 0; i < CATEGORIES.length; i++) {
 	    if (req.body[CATEGORIES[i]] == '') {
@@ -155,7 +155,7 @@ app.post('/', function(req, res) {
 	findCheckpoints(chosen, lat, lng, 0, res);
     });
 
-app.post('/en', function(req, res) {
+app.post('/sport-y/en', function(req, res) {
 	var chosen = [];
 	for (var c in CATEGORIES_EN) {
 	    if (CATEGORIES_EN.hasOwnProperty(c) && req.body[c] == '') {
