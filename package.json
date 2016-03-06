@@ -1,20 +1,32 @@
 {
   "name": "sport-y",
-  "version": "0.0.1",
-  "description": "sport-y",
+  "version": "1.0.0",
+  "description": "sport-y =======",
   "main": "web.js",
+  "dependencies": {
+    "ejs": "2.3.x",
+    "express": "4.13.x",
+    "mongodb": "2.1.x",
+    "body-parser": "x.x.x",
+    "cookie-parser": "x.x.x",
+    "method-override": "x.x.x",
+    "serve-favicon": "x.x.x"
+  },
+  "engines": {
+    "node": "0.12.7"
+  },
+  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "dependencies": {
-    "express": "3.0.x",
-    "mongodb": "1.2.14"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/red-cheese/sport-y.git"
   },
-  "engines": {
-    "node": "0.10.x"
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/red-cheese/sport-y/issues"
   },
-  "keywords": [
-    "node",
-    "heroku"
-  ]
+  "homepage": "https://github.com/red-cheese/sport-y#readme"
 }

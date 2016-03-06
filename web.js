@@ -1,4 +1,8 @@
+var bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser');
 var express = require('express');
+var favicon = require('serve-favicon');
+var methodOverride = require('method-override');
 var mongodb = require('mongodb');
 
 var MSK_LAT = 55.75;
@@ -65,10 +69,11 @@ var MONGODB_URI = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || "mongod
     checkpoints;
 
 var app = express();
-app.use(express.favicon(__dirname + '/favicon.ico'));
-app.use(express.bodyParser());
-app.use(express.cookieParser());
-app.use(express.methodOverride());
+app.use(favicon(__dirname + '/favicon.ico'));
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use(cookieParser());
+app.use(methodOverride())
 // Render html pages
 app.set('view options', { layout: false });
 app.set('view engine', 'ejs');
@@ -80,11 +85,11 @@ app.use(express.static(__dirname + '/public'));
 // Routes
 
 app.get('/', function(req, res) {
-	res.render('index.ejs', { locals: { lat: MSK_LAT, lng: MSK_LNG, toDisplay: undefined, lang: 0 } });
+	res.render('index.ejs', { lat: MSK_LAT, lng: MSK_LNG, toDisplay: JSON.stringify([]), lang: 0 });
     });
 
 app.get('/en', function(req, res) {
-	res.render('index.ejs', { locals: { lat: MSK_LAT, lng: MSK_LNG, toDisplay: undefined, lang: 1 } });
+	res.render('index.ejs', { lat: MSK_LAT, lng: MSK_LNG, toDisplay: JSON.stringify([]), lang: 1 });
     });
 
 function deg2rad(deg) {
@@ -129,11 +134,11 @@ function nearest(items, lat, lng) {
 function findCheckpoints(categories, lat, lng, lang, res) { // Ugly but works in the asynchronous Jaavascript nature
     if (categories.length == 0) {
 	checkpoints.find().toArray(function(err, items) {
-	    res.render('index.ejs', { locals: { lat: lat, lng: lng, toDisplay: JSON.stringify(nearest(items, lat, lng)), lang: lang } });
+	    res.render('index.ejs', { lat: lat, lng: lng, toDisplay: JSON.stringify(nearest(items, lat, lng)), lang: lang });
 	});
     } else {
 	checkpoints.find({ category: { $in: categories } }).toArray(function(err, items) {
-	    res.render('index.ejs', { locals: { lat: lat, lng: lng, toDisplay: JSON.stringify(nearest(items, lat, lng)), lang: lang } });
+	    res.render('index.ejs', { lat: lat, lng: lng, toDisplay: JSON.stringify(nearest(items, lat, lng)), lang: lang });
 	});
     }
 }
